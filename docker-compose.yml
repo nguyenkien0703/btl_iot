@@ -1,0 +1,16 @@
+services:
+  pgdb:
+    image: mysql
+    container_name: mysql_local
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: topsecret
+      MYSQL_DATABASE: iot
+      MYSQL_USER: root
+      MYSQL_PASSWORD: topsecret
+
+volumes:
+  mysql_data:
