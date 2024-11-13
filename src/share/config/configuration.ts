@@ -24,10 +24,10 @@ interface Configuration {
 export default (): Configuration => ({
   database: {
     host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT, 10) || 3307,
+    port: parseInt(process.env.DB_PORT, 10) || 3306,
     name: process.env.DB_NAME || 'iot',
     user: process.env.DB_USER || 'root',
-    pass: process.env.DB_PASS || 'topsecret',
+    pass: process.env.DB_PASS || 'root',
     type: process.env.DB_TYPE || 'mysql',
     logging: process.env.DB_LOGGING === 'false',
   },

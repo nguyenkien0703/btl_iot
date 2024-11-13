@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { DatabaseModule } from 'db/data-source';
+import { ImageModule } from './image/image.module';
 import configuration from './share/config/configuration';
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import configuration from './share/config/configuration';
       load: [configuration],
     }),
     DatabaseModule,
-   
+    ImageModule,
     ConfigModule.forRoot() ,
 
   ],
