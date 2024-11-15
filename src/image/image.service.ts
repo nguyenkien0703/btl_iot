@@ -1,36 +1,36 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Image } from './image.entity';
 import * as path from 'path';
 import * as fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ImageService {
-  async uploadImage(file: Express.Multer.File) {
-    // Tạo thư mục uploads nếu chưa tồn tại
-    const uploadDir = 'uploads';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir);
+  constructor(
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
+  ) {}
+
+  async uploadImage(file: Express.Multer.File, textData: string) {
+    // Tạo tên file độc nhất
+    const uniqueFileName = `${uuidv4()}${path.extname(file.originalname)}`;
+    const uploadPath = path.join('uploads', uniqueFileName);
+
+    // Đảm bảo thư mục uploads tồn tại
+    if (!fs.existsSync('uploads')) {
+      fs.mkdirSync('uploads');
     }
 
-    // Tạo tên file duy nhất
-    const uniqueFileName = `${Date.now()}-${file.originalname}`;
-    const filePath = path.join(uploadDir, uniqueFileName);
+    // Lưu file
+    fs.writeFileSync(uploadPath, file.buffer);
 
-    // Lưu file vào thư mục uploads
-    fs.writeFileSync(filePath, file.buffer);
+    // Lưu thông tin vào database
+    const image = new Image();
+    image.image_address = uniqueFileName;
+    image.textData = textData;
 
-    return {
-      success: true,
-      filename: uniqueFileName,
-      path: filePath,
-      mimetype: file.mimetype
-    };
-  }
-
-  getImagePath(filename: string) {
-    const filePath = path.join('uploads', filename);
-    if (!fs.existsSync(filePath)) {
-      return null;
-    }
-    return filePath;
+    return this.imageRepository.save(image);
   }
 } 
